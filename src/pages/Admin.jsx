@@ -2,8 +2,15 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabase";
 import MenuDia from "./MenuDia";
 
+const CLAVE_ADMIN = "restaurante2026";
+
 export default function Admin() {
-  const [seccion, setSeccion] = useState("platos"); // platos | sopas | menu
+  const [seccion, setSeccion] = useState("platos");
+
+  // ── Auth ──
+  const [autenticado, setAutenticado] = useState(false);
+  const [claveIngresada, setClaveIngresada] = useState("");
+  const [errorClave, setErrorClave] = useState(false);
 
   // ── Platos ──
   const [platos, setPlatos] = useState([]);
@@ -20,9 +27,23 @@ export default function Admin() {
   const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
+    if (sessionStorage.getItem("admin_auth") === "ok") {
+      setAutenticado(true);
+    }
     cargarPlatos();
     cargarSopas();
   }, []);
+
+  // ── Auth ──
+  function verificarClave() {
+    if (claveIngresada === CLAVE_ADMIN) {
+      sessionStorage.setItem("admin_auth", "ok");
+      setAutenticado(true);
+    } else {
+      setErrorClave(true);
+      setTimeout(() => setErrorClave(false), 3000);
+    }
+  }
 
   // ── Funciones Platos ──
   async function cargarPlatos() {
@@ -39,7 +60,6 @@ export default function Admin() {
 
     let foto_url = null;
 
-    // Si hay foto, subirla primero a Supabase Storage
     if (fotoPlato) {
       const extension = fotoPlato.name.split(".").pop();
       const nombreArchivo = `${Date.now()}.${extension}`;
@@ -77,10 +97,10 @@ export default function Admin() {
     setTimeout(() => setMensaje(""), 3000);
   }
 
-  +async function eliminarPlato(id) {
+  async function eliminarPlato(id) {
     const { error } = await supabase.from("platos").delete().eq("id", id);
     if (!error) cargarPlatos();
-  };
+  }
 
   // ── Funciones Sopas ──
   async function cargarSopas() {
@@ -113,6 +133,45 @@ export default function Admin() {
     if (!error) cargarSopas();
   }
 
+  // ── Pantalla de login ──
+  if (!autenticado) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
+          <div className="text-center mb-6">
+            <p className="text-4xl mb-2">🔐</p>
+            <h1 className="text-xl font-bold text-gray-800">
+              Panel Administrativo
+            </h1>
+            <p className="text-sm text-gray-400 mt-1">
+              Ingresa la contraseña para continuar
+            </p>
+          </div>
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={claveIngresada}
+            onChange={(e) => setClaveIngresada(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && verificarClave()}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400 text-center text-lg tracking-widest"
+          />
+          {errorClave && (
+            <p className="text-red-500 text-sm text-center mb-3">
+              ❌ Contraseña incorrecta
+            </p>
+          )}
+          <button
+            onClick={verificarClave}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition"
+          >
+            Entrar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Panel principal ──
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
@@ -160,7 +219,6 @@ export default function Admin() {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
               rows={2}
             />
-            {/* Input de foto */}
             <div className="mb-3">
               <label className="text-sm text-gray-500 block mb-1">
                 Foto del plato (opcional)
@@ -308,7 +366,7 @@ export default function Admin() {
         </div>
       )}
 
-      {/* ── Sección Menú del Día ── (próximamente) */}
+      {/* ── Sección Menú del Día ── */}
       {seccion === "menu" && <MenuDia />}
     </div>
   );
