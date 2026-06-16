@@ -143,7 +143,10 @@ export default function Cliente() {
     setEnviando(false);
   }
 
-  const total = carrito.reduce((sum, item) => sum + item.precio, 0);
+  const total = carrito.reduce(
+    (sum, item) => sum + (item.con_sopa ? item.precio : item.precio - 1),
+    0,
+  );
 
   // ── Pantalla de carga ──
   if (cargando) {
@@ -290,7 +293,16 @@ export default function Cliente() {
                   </button>
                 </div>
                 <p className="text-orange-500 font-semibold text-sm mb-3">
-                  ${item.precio.toLocaleString()}
+                  $
+                  {(item.con_sopa
+                    ? item.precio
+                    : item.precio - 1
+                  ).toLocaleString()}
+                  {!item.con_sopa && (
+                    <span className="text-green-500 text-xs ml-2">
+                      -$1 sin sopa
+                    </span>
+                  )}
                 </p>
 
                 {/* Toggle sopa */}
