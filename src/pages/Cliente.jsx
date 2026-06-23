@@ -205,6 +205,12 @@ export default function Cliente() {
     <div className="min-h-screen bg-orange-50">
       {/* Header */}
       <div className="bg-orange-500 text-white p-4 text-center shadow">
+        {/* Logo del restaurante */}
+        <img
+          src="/logo.png"
+          alt="La Tertulia Restaurante"
+          className="h-24 mx-auto mb-2 object-contain"
+        />
         <h1 className="text-xl font-bold">🍽️ Menú del Día</h1>
         {sopaDelDia && (
           <p className="text-orange-100 text-sm mt-1">
@@ -227,7 +233,7 @@ export default function Cliente() {
                     <img
                       src={item.platos.foto_url}
                       alt={item.platos.nombre}
-                      className="w-20 h-20 object-cover rounded-xl flex-shrink-0"
+                      className="w-28 h-28 object-cover rounded-xl flex-shrink-0"
                     />
                   )}
                   <div>
