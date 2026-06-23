@@ -194,12 +194,19 @@ export default function MenuDia() {
                         Precio ($)
                       </label>
                       <input
-                        type="number"
-                        placeholder="0"
-                        value={info?.precio || ""}
-                        onChange={(e) =>
-                          cambiarCampo(plato.id, "precio", e.target.value)
+                        type="text"
+                        placeholder="Ej: 14000"
+                        value={
+                          info?.precio
+                            ? Number(info.precio).toLocaleString("es-CO")
+                            : ""
                         }
+                        onChange={(e) => {
+                          const soloNumeros = e.target.value
+                            .replace(/\./g, "")
+                            .replace(/[^0-9]/g, "");
+                          cambiarCampo(plato.id, "precio", soloNumeros);
+                        }}
                         className="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                       />
                     </div>

@@ -144,7 +144,7 @@ export default function Cliente() {
   }
 
   const total = carrito.reduce(
-    (sum, item) => sum + (item.con_sopa ? item.precio : item.precio - 1),
+    (sum, item) => sum + (item.con_sopa ? item.precio : item.precio - 1000),
     0,
   );
 
@@ -246,7 +246,7 @@ export default function Cliente() {
                       </p>
                     )}
                     <p className="text-orange-500 font-semibold mt-1">
-                      ${item.precio.toLocaleString()}
+                      ${item.precio.toLocaleString("es-CO")}
                     </p>
                     <p className="text-xs text-gray-400">
                       Quedan: {item.cantidad_disponible}
@@ -268,7 +268,7 @@ export default function Cliente() {
               onClick={() => setPaso("carrito")}
               className="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 rounded-xl transition"
             >
-              Ver carrito ({carrito.length}) — ${total.toLocaleString()}
+              Ver carrito ({carrito.length}) — ${total.toLocaleString("es-CO")}
             </button>
           )}
         </div>
@@ -302,11 +302,11 @@ export default function Cliente() {
                   $
                   {(item.con_sopa
                     ? item.precio
-                    : item.precio - 1
-                  ).toLocaleString()}
+                    : item.precio - 1000
+                  ).toLocaleString("es-CO")}
                   {!item.con_sopa && (
                     <span className="text-green-500 text-xs ml-2">
-                      -$1 sin sopa
+                      -$1,000 sin sopa
                     </span>
                   )}
                 </p>
@@ -334,7 +334,7 @@ export default function Cliente() {
           <div className="bg-white rounded-xl shadow p-4 mb-4 flex justify-between items-center">
             <span className="font-semibold text-gray-700">Total</span>
             <span className="text-xl font-bold text-orange-500">
-              ${total.toLocaleString()}
+              ${total.toLocaleString("es-CO")}
             </span>
           </div>
 
